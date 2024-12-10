@@ -20,9 +20,57 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-st.markdown("#Welcome to my app!")
+# Streamlit app setup
+st.title("LinkedIn User Prediction App")
+st.markdown("""This app predicts whether a person is likely to be a LinkedIn user based on demographic and personal information.
+Please enter the required details below.""")
 
-st.markdown('###Please enter some text below and press enter')
+# Mapping dictionaries for labels
+income_labels = {
+    1: "Less than $10,000",
+    2: "10 to under $20,000",
+    3: "20 to under $30,000",
+    4: "30 to under $40,000",
+    5: "40 to under $50,000",
+    6: "50 to under $75,000",
+    7: "75 to under $100,000",
+    8: "100 to under $150,000",
+    9: "$150,000 or more",
+}
+
+education_labels = {
+    1: "Less than high school (Grades 1-8 or no formal schooling)",
+    2: "High school incomplete (Grades 9-11 or Grade 12 with NO diploma)",
+    3: "High school graduate (Grade 12 with diploma or GED certificate)",
+    4: "Some college, no degree (includes some community college)",
+    5: "Two-year associate degree from a college or university",
+    6: "Four-year college or university degree/Bachelor’s degree (e.g., BS, BA, AB)",
+    7: "Some postgraduate or professional schooling, no postgraduate degree (e.g. some graduate school)",
+    8: "Postgraduate or professional degree, including master’s, doctorate, medical or law degree (e.g., MA, MS, PhD, MD, JD)",
+}
+
+marital_labels = {
+    1: "Married",
+    2: "Living with a partner",
+    3: "Divorced",
+    4: "Separated",
+    5: "Widowed",
+    6: "Never been married",
+}
+
+# Input fields
+income = st.selectbox("Household Income", options=list(income_labels.keys()), format_func=lambda x: income_labels[x])
+education = st.selectbox("Highest Level of Education", options=list(education_labels.keys()), format_func=lambda x: education_labels[x])
+marital = st.selectbox("Current Marital Status", options=list(marital_labels.keys()), format_func=lambda x: marital_labels[x])
+parent = st.radio("Are you a parent?", options=[1, 0], format_func=lambda x: "Yes" if x == 1 else "No")
+female = st.radio("Gender", options=[1, 0], format_func=lambda x: "Female" if x == 1 else "Male")
+age = st.slider("Age (up to 98)", min_value=1, max_value=98, value=30, step=1)
+
+# Convert marital status into binary (1 = married, 0 = not married) for the model
+is_married = 1 if marital == 1 else 0
+
+# Collect inputs into a list
+input_data = [income, education, parent, marital, female, age]
 
 # Load the data
 s = pd.read_csv('C:/Users/harpe/Documents/Georgetown MSBA/social_media_usage.csv')
@@ -296,6 +344,24 @@ prob_2 = model.predict_proba(example_2)[:, 1][0]
 print(f"Probability for example 1 (42 years old): {prob_1}")
 print(f"Probability for example 2 (82 years old): {prob_2}")
 
-text = st.text_input("Enter Text", value="Enter Text Here")
+# Function to classify and return LinkedIn user status and probability
+def classify_linkedin_user(model, input_data):
+    """
+    Predicts LinkedIn user status and probability based on input data.
+    """
+    prob = model.predict_proba([input_data])[:, 1][0]
+    is_user = int(prob > 0.5)  # Classification threshold
+    return {'is_user': is_user, 'probability': prob}
+
+# Button to predict
+if st.button("Predict LinkedIn Usage"):
+    result = classify_linkedin_user(model, input_data)
+    user_status = "LinkedIn User" if result['is_user'] == 1 else "Non-LinkedIn User"
+    probability = round(result['probability'] * 100, 2)
+    
+    # Display results
+    st.subheader("Prediction Results")
+    st.write(f"**User Status**: {user_status}")
+    st.write(f"**Probability**: {probability}%")
 
 # ***
