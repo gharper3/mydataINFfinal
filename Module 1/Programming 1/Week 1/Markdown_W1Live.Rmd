@@ -1,0 +1,54 @@
+---
+title: "Markdown_W1Live"
+output: html_document
+date: "2024-08-29"
+---
+
+#### Read the dataset and check some of its basic information:
+```{r}
+WV = read.csv("WorldValues_W1Live.csv")
+dim(WV) #Dimension of the dataset
+head(WV) #First few rows of the dataset
+class(WV) #Class type of the data object
+str(WV) #Variable types
+```
+
+#### 1: Does this dataset have missing values? If so, how many missing values does it have?
+```{r}
+anyNA(WV)
+sum(is.na(WV))
+```
+
+#### 2: Create an object that contains unique birth years. How many unique birth years the dataset have?
+```{r}
+unique(WV$BirthYear)
+length(unique(WV$BirthYear))
+```
+
+
+#### 3: Create a new variable that stores the age of each respondent at the time of the survey. (add this variable to the dataset)
+```{r}
+WV$Age = WV$SurveyYear - WV$BirthYear
+
+
+```
+
+
+#### 4: What is the average age of survey respondents?
+```{r}
+
+
+```
+
+
+#### 5: How many responses are from country 12? The variable 'Code' captures country code for responses.
+```{r}
+
+```
+
+#### 6: What is the average age of respondents from country 12?
+```{r}
+
+```
+
+
