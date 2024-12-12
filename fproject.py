@@ -73,7 +73,7 @@ is_married = 1 if marital == 1 else 0
 input_data = [income, education, parent, marital, female, age]
 
 # Load the data
-s = pd.read_csv('C:/Users/harpe/Documents/Georgetown MSBA/social_media_usage.csv')
+s = pd.read_csv('https://raw.githubusercontent.com/gharper3/fproject/refs/heads/main/social_media_usage.csv')
 print("Dimensions of the dataframe:", s.shape)
 
 
